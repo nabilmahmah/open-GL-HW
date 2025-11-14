@@ -1,4 +1,4 @@
-# we will but screen shost here after we finish
+# we will but screenshots here after we finish
 
 ## Contributors
 
