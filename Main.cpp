@@ -258,10 +258,10 @@ int main()
 		mat4 transformation = mat4(1.0f);
 
 		body3d.drawStrip(ourShader);
-		body3d.drawOutline(ourShader);
+		// body3d.drawOutline(ourShader);
 
 		headTringle3d.drawStrip(ourShader);
-		headTringle3d.drawOutline(ourShader);
+		// headTringle3d.drawOutline(ourShader);
 
 		vec3 stickOrigin = vec3(0.0f, -0.5f, -0.1f);
 
@@ -275,13 +275,13 @@ int main()
 		stickThing3d.transformation(stickTransformation);
 
 		stick3d.drawStrip(ourShader);
-		stick3d.drawOutline(ourShader);
+		// stick3d.drawOutline(ourShader);
 
 		stickThing3d.drawStrip(ourShader);
-		stickThing3d.drawOutline(ourShader);
+		// stickThing3d.drawOutline(ourShader);
 
 		plate.drawFan(ourShader);
-		plate.drawOutline(ourShader);
+		// plate.drawOutline(ourShader);
 
 		vec3 centerOrigin = vec3(0.0f, 0.0f, -0.0f);
 
@@ -292,7 +292,7 @@ int main()
 
 		secounds3d.transformation(secoundsTransformation);
 		secounds3d.drawFan(ourShader);
-		secounds3d.drawOutline(ourShader);
+		// secounds3d.drawOutline(ourShader);
 
 		mat4 minutesTransformation = mat4(1.0f);
 		minutesTransformation = translate(minutesTransformation, -centerOrigin);
@@ -301,7 +301,7 @@ int main()
 
 		minutes3d.transformation(minutesTransformation);
 		minutes3d.drawFan(ourShader);
-		minutes3d.drawOutline(ourShader);
+		// minutes3d.drawOutline(ourShader);
 
 		mat4 hoursTransformation = mat4(1.0f);
 		hoursTransformation = translate(hoursTransformation, -centerOrigin);
@@ -310,11 +310,11 @@ int main()
 
 		hours3d.transformation(hoursTransformation);
 		hours3d.drawFan(ourShader);
-		hours3d.drawOutline(ourShader);
+		// hours3d.drawOutline(ourShader);
 
 		// bolt3d.drawStrip(ourShader);
 		bolt3d.drawFan(ourShader);
-		bolt3d.drawOutline(ourShader);
+		// bolt3d.drawOutline(ourShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
