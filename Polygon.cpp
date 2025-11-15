@@ -6,9 +6,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Polygon {
+class Polygon
+{
 public:
-	Polygon(std::vector<glm::vec3> v, glm::vec3 c) {
+	Polygon(std::vector<glm::vec3> v, glm::vec3 c)
+	{
 		vertices = v;
 		head = v.at(0);
 		color = c;
@@ -22,16 +24,17 @@ public:
 		// position attribute
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *)0);
 		glEnableVertexAttribArray(0);
 		this->VAO = VAO;
 	}
 
-	void transformation(glm::mat4 t) {
+	void transformation(glm::mat4 t)
+	{
 		model = t;
 	}
 
-	void draw(Shader &shader)
+	void drawFan(Shader &shader)
 	{
 		shader.setVec3("objectColor", color);
 		shader.setMat4("model", model);
@@ -39,9 +42,24 @@ public:
 		glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
 	}
 
-	void deleteBuffers() {
+	void drawStrip(Shader &shader)
+	{
+		shader.setVec3("objectColor", color);
+		shader.setMat4("model", model);
+		glBindVertexArray(this->VAO);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+	}
+	void drawOutline(Shader &shader, glm::vec3 lineColor = glm::vec3(0, 0, 0))
+	{
+		shader.setVec3("objectColor", lineColor);
+		shader.setMat4("model", model);
+		glBindVertexArray(this->VAO);
+		glDrawArrays(GL_LINE_LOOP, 0, vertices.size());
+	}
+	void deleteBuffers()
+	{
 		glDeleteVertexArrays(1, &VAO);
-		//glDeleteBuffers(1, &VBO);
+		// glDeleteBuffers(1, &VBO);
 	}
 
 private:
@@ -52,4 +70,3 @@ private:
 	GLuint VAO;
 	Polygon();
 };
-

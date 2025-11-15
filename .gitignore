@@ -1,0 +1,10 @@
+# ignore everything
+*
+
+# include only the main and the polygon class
+!Main.cpp
+!Polygon.cpp
+
+# include README.MD and .gitignore
+!README.MD
+!.gitignore
