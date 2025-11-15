@@ -267,7 +267,7 @@ int main()
 
 		mat4 stickTransformation = mat4(1.0f);
 		stickTransformation = translate(stickTransformation, -stickOrigin);
-		stickTransformation = rotate(stickTransformation, (float)cos(glfwGetTime() * 2) * 0.2f, vec3(0.0f, 0.0f, 1.0f));
+		stickTransformation = rotate(stickTransformation, (float)cos(glfwGetTime() * 3) * 0.2f, vec3(0.0f, 0.0f, 1.0f));
 		stickTransformation = translate(stickTransformation, stickOrigin);
 
 		stick3d.transformation(stickTransformation);
@@ -287,7 +287,7 @@ int main()
 
 		mat4 secoundsTransformation = mat4(1.0f);
 		secoundsTransformation = translate(secoundsTransformation, -centerOrigin);
-		secoundsTransformation = rotate(secoundsTransformation, -(float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f));
+		secoundsTransformation = rotate(secoundsTransformation, -radians((float)(int)glfwGetTime()), vec3(0.0f, 0.0f, 1.0f));
 		secoundsTransformation = translate(secoundsTransformation, centerOrigin);
 
 		secounds3d.transformation(secoundsTransformation);
@@ -296,7 +296,7 @@ int main()
 
 		mat4 minutesTransformation = mat4(1.0f);
 		minutesTransformation = translate(minutesTransformation, -centerOrigin);
-		minutesTransformation = rotate(minutesTransformation, -(float)glfwGetTime() / 60, vec3(0.0f, 0.0f, 1.0f));
+		minutesTransformation = rotate(minutesTransformation, -radians((float)(int)glfwGetTime()) / 60, vec3(0.0f, 0.0f, 1.0f));
 		minutesTransformation = translate(minutesTransformation, centerOrigin);
 
 		minutes3d.transformation(minutesTransformation);
@@ -305,7 +305,7 @@ int main()
 
 		mat4 hoursTransformation = mat4(1.0f);
 		hoursTransformation = translate(hoursTransformation, -centerOrigin);
-		hoursTransformation = rotate(hoursTransformation, -(float)glfwGetTime() / 60 / 60, vec3(0.0f, 0.0f, 1.0f));
+		hoursTransformation = rotate(hoursTransformation, -radians((float)(int)glfwGetTime()) / 60 / 60, vec3(0.0f, 0.0f, 1.0f));
 		hoursTransformation = translate(hoursTransformation, centerOrigin);
 
 		hours3d.transformation(hoursTransformation);
@@ -315,6 +315,9 @@ int main()
 		// bolt3d.drawStrip(ourShader);
 		bolt3d.drawFan(ourShader);
 		// bolt3d.drawOutline(ourShader);
+
+		// cout << (float)(int)glfwGetTime() << endl;
+		// cout << radians((float)(int)glfwGetTime()) << endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
