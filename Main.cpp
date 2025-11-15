@@ -10,9 +10,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include "Polygon.cpp"
-#include "Main.h"
+// #include "Main.h"
 
 using namespace glm;
+using namespace std;
 
 int width = 800;
 int height = 600;
@@ -26,44 +27,148 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 
-		 cameraPos = vec3(0.0f, 0.0f, 4.0f);
+		cameraPos = vec3(0.0f, 0.0f, 4.0f);
 		cameraFront = vec3(0.0f, 0.0f, -1.0f);
 		cameraUp = vec3(0.0f, 1.0f, 0.0f);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-    const float cameraSpeed = 0.005f; 
+	const float cameraSpeed = 0.05f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		cameraPos += cross(cameraFront,normalize(cross(cameraFront, cameraUp))) * cameraSpeed;
+		cameraPos += cross(cameraFront, normalize(cross(cameraFront, cameraUp))) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		cameraPos -= cross(cameraFront, normalize(cross(cameraFront, cameraUp))) * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
 		mat4 rotationMatrix = glm::rotate(mat4(1.0f), 0.001f, vec3(0.0f, 1.0f, 0.0f));
 		vec4 rotatedVectorHomogeneous = rotationMatrix * vec4(cameraFront, 1.0f);
 		cameraFront = vec3(rotatedVectorHomogeneous);
 	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
 		mat4 rotationMatrix = glm::rotate(mat4(1.0f), 0.001f, vec3(0.0f, -1.0f, 0.0f));
 		vec4 rotatedVectorHomogeneous = rotationMatrix * vec4(cameraFront, 1.0f);
 		cameraFront = vec3(rotatedVectorHomogeneous);
 	}
 }
 
+//! note the the drawing method should be GL_TRIANGLE_FAN for this to work
+Polygon makeCirclePlate(float r, vec3 c, vec3 center = vec3(0.0f, 0.0f, 0.0f))
+{
+	vector<vec3> v;
 
+	const int seg = 32;
+
+	// center
+	v.push_back(center);
+
+	// c-r points
+	for (int i = 0; i <= seg; i++)
+	{
+		float angle = (float)i * (2.0f * pi<float>() / seg);
+		float x = cos(angle) * r;
+		float y = sin(angle) * r;
+
+		v.push_back(vec3(x, y, center.z));
+	}
+
+	return Polygon(v, c);
+}
+
+//! note the the drawing method should be GL_TRIANGLE_STRIP for this to work
+Polygon make3dPoly(vector<vec3> vertices, vec3 c, float z)
+{
+	vector<vec3> v;
+	int s = vertices.size();
+
+	// front
+	for (vec3 vec : vertices)
+	{
+		v.push_back(vec);
+	}
+	v.push_back(vertices.at(0));
+
+	// back
+	for (vec3 vec : vertices)
+	{
+		v.push_back(vec3(vec.x, vec.y, vec.z + z));
+	}
+	v.push_back(vec3(vertices.at(0).x, vertices.at(0).y, z));
+
+	// sides
+	for (int i = 0; i < s; i++)
+	{
+		int n = (i + 1) % s;
+		v.push_back(vertices.at(i));
+		v.push_back(vec3(vertices.at(i).x, vertices.at(i).y, vertices.at(i).z + z));
+		v.push_back(vertices.at(n));
+		v.push_back(vec3(vertices.at(n).x, vertices.at(n).y, vertices.at(i).z + z));
+		v.push_back(vertices.at(i));
+	}
+
+	return Polygon(v, c);
+}
+// Polygon make3dPoly(vector<vec3> vertices, vec3 c, float z) // GL_TRIANGLE_STRIP
+// {
+// 	vector<vec3> v;
+//
+// 	int n = vertices.size();
+// 	for (vec3 v3 : vertices)
+// 	{ // front
+// 		v.push_back(v3);
+// 	}
+// 	v.push_back(vec3(vertices.at(0)));
+//
+// 	for (vec3 v3 : vertices)
+// 	{ // back
+// 		v.push_back(vec3(v3.x, v3.y, z));
+// 	}
+// 	v.push_back(vec3(vertices.at(0).x, vertices.at(0).y, z));
+//
+// 	// right
+// 	v.push_back(vertices.at(0));
+// 	v.push_back(vec3(vertices.at(0).x, vertices.at(0).y, z));
+// 	v.push_back(vertices.at(3));
+// 	v.push_back(vec3(vertices.at(3).x, vertices.at(3).y, z));
+// 	v.push_back(vertices.at(0));
+//
+// 	// left
+// 	v.push_back(vertices.at(1));
+// 	v.push_back(vec3(vertices.at(1).x, vertices.at(1).y, z));
+// 	v.push_back(vertices.at(2));
+// 	v.push_back(vec3(vertices.at(2).x, vertices.at(2).y, z));
+// 	v.push_back(vertices.at(1));
+//
+// 	// top
+// 	v.push_back(vertices.at(0));
+// 	v.push_back(vertices.at(1));
+// 	v.push_back(vec3(vertices.at(0).x, vertices.at(0).y, z));
+// 	v.push_back(vec3(vertices.at(1).x, vertices.at(1).y, z));
+// 	v.push_back(vertices.at(0));
+//
+// 	// bottom
+// 	v.push_back(vertices.at(3));
+// 	v.push_back(vertices.at(2));
+// 	v.push_back(vec3(vertices.at(3).x, vertices.at(3).y, z));
+// 	v.push_back(vec3(vertices.at(2).x, vertices.at(2).y, z));
+// 	v.push_back(vertices.at(3));
+//
+// 	return Polygon(v, c);
+// }
 
 int main()
 {
 	glfwInit();
-	GLFWwindow* window = glfwCreateWindow(width, height, "Lecture 3", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(width, height, "Hamza Syrage & Nabil Mahmah", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
@@ -71,56 +176,66 @@ int main()
 
 	Shader ourShader("./shaders/vs/L3.vs", "./shaders/fs/L3.fs");
 
-	std::vector<vec3> vertices0 = {};
-	vertices0.push_back(vec3(0.01f, -3.0f, 0.0f));
-	vertices0.push_back(vec3(-0.01f, -3.0f, 0.0f));
-	vertices0.push_back(vec3(-0.01f, 3.0f, 0.0f));
-	vertices0.push_back(vec3(0.01f, 3.0f, 0.0f));
-	Polygon axis = Polygon(vertices0, vec3(0.0f, 0.0f, 0.0f));
+	vector<vec3> body = {};
+	body.push_back(vec3(0.5f, 0.5f, 0.0f));
+	body.push_back(vec3(-0.5f, 0.5f, 0.0f));
+	body.push_back(vec3(-0.5f, -0.5f, 0.0f));
+	body.push_back(vec3(0.5f, -0.5f, 0.0f));
+	Polygon body3d = make3dPoly(body, vec3(0.8f, 0.0f, 0.0f), -1.0f);
 
-	std::vector<vec3> vertices1 = {};
-	vertices1.push_back(vec3(0.5f, 0.5f, 0.0f));
-	vertices1.push_back(vec3(-0.5f, 0.5f, 0.0f));
-	vertices1.push_back(vec3(-0.5f, -0.5f, 0.0f));
-	vertices1.push_back(vec3(0.5f, -0.5f, 0.0f));
-	Polygon polygon1 = Polygon(vertices1, vec3(1.0f, 0.0f, 0.0f));
+	vector<vec3> headTringle = {};
+	headTringle.push_back(vec3(0.501f, 0.501f, 0.0f));
+	headTringle.push_back(vec3(0.001f, 0.9f, 0.0f));
+	headTringle.push_back(vec3(-0.501f, 0.501f, 0.0f));
+	Polygon headTringle3d = make3dPoly(headTringle, vec3(0.0f, 0.8f, 0.0f), -1.0f);
 
-	std::vector<vec3> vertices2 = {};
-	vertices2.push_back(vec3(0.03f, 0.0f, 0.0f));
-	vertices2.push_back(vec3(0.03f, -0.75f, 0.0f));
-	vertices2.push_back(vec3(-0.03f, -0.75f, 0.0f));
-	vertices2.push_back(vec3(-0.03f, 0.0f, 0.0f));
-	Polygon polygon2 = Polygon(vertices2, vec3(0.0f, 0.0f, 1.0f));
+	vector<vec3> stick = {};
+	stick.push_back(vec3(0.1f, -0.5f, -0.1f));
+	stick.push_back(vec3(-0.1f, -0.5f, -0.1f));
+	stick.push_back(vec3(-0.1f, -1.0f, -0.1f));
+	stick.push_back(vec3(0.1f, -1.0f, -0.1f));
+	Polygon stick3d = make3dPoly(stick, vec3(0.0f, 0.0f, 0.8f), -0.1f);
 
-	std::vector<vec3>vertices3 = {};
-	vertices3.push_back(vec3(0.1f,-0.8f,0.0f));
-	vertices3.push_back(vec3(0.1f, -1.0f, 0.0f));
-	vertices3.push_back(vec3(-0.1f, -1.0f, 0.0f));
-	vertices3.push_back(vec3(-0.1f, -0.8f, 0.0f));
-	Polygon polygon3 = Polygon(vertices3, vec3(0.0f, 1.0f, 0.0f));
+	vector<vec3> stickThing = {};
+	stickThing.push_back(vec3(0.2f, -1.0f, -0.0f));
+	stickThing.push_back(vec3(-0.2f, -1.0f, -0.0f));
+	stickThing.push_back(vec3(-0.2f, -1.4f, -0.0f));
+	stickThing.push_back(vec3(0.2f, -1.4f, -0.0f));
+	Polygon stickThing3d = make3dPoly(stickThing, vec3(0.0f, 0.0f, 0.8f), -0.4f);
 
-	std::vector<vec3>vertices4 = {};
-	vertices4.push_back(vec3(0.01f, 0.0f, 0.01f));
-	vertices4.push_back(vec3(0.01f, 0.4f, 0.01f));
-	vertices4.push_back(vec3(-0.01f, 0.4f, 0.01f));
-	vertices4.push_back(vec3(-0.01f, 0.0f, 0.01f));
-	Polygon polygon4 = Polygon(vertices4, vec3(1.0f, 1.0f, 0.0f));
+	Polygon plate = makeCirclePlate(0.4f, vec3(0.8f, 0.8f, 0.8f), vec3(0.0f, 0.0f, 0.01f));
 
-	std::vector<vec3>vertices5 = {};
-	vertices5.push_back(vec3(0.01f, 0.0f, 0.015f));
-	vertices5.push_back(vec3(0.01f, 0.35f, 0.015f));
-	vertices5.push_back(vec3(-0.01f, 0.35f, 0.015f));
-	vertices5.push_back(vec3(-0.01f, 0.0f, 0.015f));
-	Polygon polygon5 = Polygon(vertices5, vec3(1.0f, 0.5f, 0.0f));
+	// vector<vec3> bolt = {};
+	// bolt.push_back(vec3(0.02f, 0.02f, 0.0f));
+	// bolt.push_back(vec3(-0.02f, 0.02f, 0.0f));
+	// bolt.push_back(vec3(-0.02f, -0.02f, 0.0f));
+	// bolt.push_back(vec3(0.02f, -0.02f, 0.0f));
+	// Polygon bolt3d = make3dPoly(bolt, vec3(1.0f, 1.0f, 1.0f), 0.02f);
+	Polygon bolt3d = makeCirclePlate(0.03f, vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.02f));
 
-	std::vector<vec3>vertices6 = {};
-	vertices6.push_back(vec3(0.01f, 0.0f, 0.02f));
-	vertices6.push_back(vec3(0.01f, 0.3f, 0.02f));
-	vertices6.push_back(vec3(-0.01f, 0.3f, 0.02f));
-	vertices6.push_back(vec3(-0.01f, 0.0f, 0.02f));
-	Polygon polygon6 = Polygon(vertices6, vec3(0.5f, 1.0f, 0.0f));
+	vector<vec3> secounds = {};
+	secounds.push_back(vec3(0.005f, 0.35f, 0.016f));
+	secounds.push_back(vec3(0.0f, 0.39f, 0.016f));
+	secounds.push_back(vec3(-0.005f, 0.35f, 0.016f));
+	secounds.push_back(vec3(-0.005f, -0.0f, 0.016f));
+	secounds.push_back(vec3(0.005f, -0.0f, 0.016f));
+	Polygon secounds3d = make3dPoly(secounds, vec3(0.0f, 0.0f, 0.0f), 0.0001f);
 
+	vector<vec3> minutes = {};
+	minutes.push_back(vec3(0.01f, 0.30f, 0.014f));
+	minutes.push_back(vec3(0.0f, 0.34f, 0.014f));
+	minutes.push_back(vec3(-0.01f, 0.30f, 0.014f));
+	minutes.push_back(vec3(-0.01f, -0.0f, 0.014f));
+	minutes.push_back(vec3(0.01f, -0.0f, 0.014f));
+	Polygon minutes3d = make3dPoly(minutes, vec3(0.2f, 0.2f, 0.2f), 0.0001f);
 
+	vector<vec3> hours = {};
+	hours.push_back(vec3(0.02f, 0.25f, 0.012f));
+	hours.push_back(vec3(0.0f, 0.29f, 0.012f));
+	hours.push_back(vec3(-0.02f, 0.25f, 0.012f));
+	hours.push_back(vec3(-0.02f, -0.0f, 0.012f));
+	hours.push_back(vec3(0.02f, -0.0f, 0.012f));
+	Polygon hours3d = make3dPoly(hours, vec3(0.4f, 0.4f, 0.4f), 0.0001f);
 
 	ourShader.use();
 
@@ -132,7 +247,7 @@ int main()
 	{
 		processInput(window);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.12f, 0.24f, 0.24f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		mat4 view = mat4(1.0f);
@@ -141,38 +256,65 @@ int main()
 		ourShader.setMat4("view", view);
 
 		mat4 transformation = mat4(1.0f);
-		transformation = translate(transformation, vec3(-0.5f, -0.5f, 0.0f));
-		axis.transformation(transformation);
-		axis.draw(ourShader);
 
+		body3d.drawStrip(ourShader);
+		body3d.drawOutline(ourShader);
 
-		polygon1.draw(ourShader);
+		headTringle3d.drawStrip(ourShader);
+		headTringle3d.drawOutline(ourShader);
 
-		transformation = translate(transformation, vec3(0.5f, 0.0f, 0.0f));
-		transformation = rotate(transformation, (float)cos(glfwGetTime()) / 2, vec3(0.0f, 0.0f, 1.0f));
-		polygon2.transformation(transformation);
-		polygon2.draw(ourShader);
+		vec3 stickOrigin = vec3(0.0f, -0.5f, -0.1f);
 
-		transformation = mat4(1.0f);
-		transformation = translate(transformation, vec3(0.0f, -0.45f, 0.0f));
-		transformation = rotate(transformation, (float)cos(glfwGetTime()) / 2, vec3(0.0f, 0.0f, 1.0f));
-		polygon3.transformation(transformation);
-		polygon3.draw(ourShader);
-		transformation = mat4(1.0f);
+		mat4 stickTransformation = mat4(1.0f);
+		stickTransformation = translate(stickTransformation, -stickOrigin);
+		stickTransformation = rotate(stickTransformation, (float)cos(glfwGetTime() * 2) * 0.2f, vec3(0.0f, 0.0f, 1.0f));
+		stickTransformation = translate(stickTransformation, stickOrigin);
 
-		transformation = rotate(transformation, (float)glfwGetTime()/25, vec3(0.0f, 0.0f, -1.0f));
-		polygon4.transformation(transformation);
-		polygon4.draw(ourShader);
+		stick3d.transformation(stickTransformation);
 
-		transformation = mat4(1.0f);
-		transformation = rotate(transformation, (float)glfwGetTime() / 15, vec3(0.0f, 0.0f, -1.0f));
-		polygon5.transformation(transformation);
-		polygon5.draw(ourShader);
-		transformation = mat4(1.0f);
-		transformation = rotate(transformation, (float)glfwGetTime() / 5, vec3(0.0f, 0.0f, -1.0f));
-		polygon6.transformation(transformation);
-		polygon6.draw(ourShader);
-		
+		stickThing3d.transformation(stickTransformation);
+
+		stick3d.drawStrip(ourShader);
+		stick3d.drawOutline(ourShader);
+
+		stickThing3d.drawStrip(ourShader);
+		stickThing3d.drawOutline(ourShader);
+
+		plate.drawFan(ourShader);
+		plate.drawOutline(ourShader);
+
+		vec3 centerOrigin = vec3(0.0f, 0.0f, -0.0f);
+
+		mat4 secoundsTransformation = mat4(1.0f);
+		secoundsTransformation = translate(secoundsTransformation, -centerOrigin);
+		secoundsTransformation = rotate(secoundsTransformation, -(float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f));
+		secoundsTransformation = translate(secoundsTransformation, centerOrigin);
+
+		secounds3d.transformation(secoundsTransformation);
+		secounds3d.drawFan(ourShader);
+		secounds3d.drawOutline(ourShader);
+
+		mat4 minutesTransformation = mat4(1.0f);
+		minutesTransformation = translate(minutesTransformation, -centerOrigin);
+		minutesTransformation = rotate(minutesTransformation, -(float)glfwGetTime() / 60, vec3(0.0f, 0.0f, 1.0f));
+		minutesTransformation = translate(minutesTransformation, centerOrigin);
+
+		minutes3d.transformation(minutesTransformation);
+		minutes3d.drawFan(ourShader);
+		minutes3d.drawOutline(ourShader);
+
+		mat4 hoursTransformation = mat4(1.0f);
+		hoursTransformation = translate(hoursTransformation, -centerOrigin);
+		hoursTransformation = rotate(hoursTransformation, -(float)glfwGetTime() / 60 / 60, vec3(0.0f, 0.0f, 1.0f));
+		hoursTransformation = translate(hoursTransformation, centerOrigin);
+
+		hours3d.transformation(hoursTransformation);
+		hours3d.drawFan(ourShader);
+		hours3d.drawOutline(ourShader);
+
+		// bolt3d.drawStrip(ourShader);
+		bolt3d.drawFan(ourShader);
+		bolt3d.drawOutline(ourShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
