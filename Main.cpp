@@ -214,25 +214,25 @@ int main()
 	Polygon bolt3d = makeCirclePlate(0.03f, vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.02f));
 
 	vector<vec3> secounds = {};
-	secounds.push_back(vec3(0.005f, 0.35f, 0.016f));
-	secounds.push_back(vec3(0.0f, 0.39f, 0.016f));
-	secounds.push_back(vec3(-0.005f, 0.35f, 0.016f));
+	secounds.push_back(vec3(0.005f, 0.30f, 0.016f));
+	secounds.push_back(vec3(0.0f, 0.34f, 0.016f));
+	secounds.push_back(vec3(-0.005f, 0.30f, 0.016f));
 	secounds.push_back(vec3(-0.005f, -0.0f, 0.016f));
 	secounds.push_back(vec3(0.005f, -0.0f, 0.016f));
 	Polygon secounds3d = make3dPoly(secounds, vec3(0.0f, 0.0f, 0.0f), 0.0001f);
 
 	vector<vec3> minutes = {};
-	minutes.push_back(vec3(0.01f, 0.30f, 0.014f));
-	minutes.push_back(vec3(0.0f, 0.34f, 0.014f));
-	minutes.push_back(vec3(-0.01f, 0.30f, 0.014f));
+	minutes.push_back(vec3(0.01f, 0.20f, 0.014f));
+	minutes.push_back(vec3(0.0f, 0.24f, 0.014f));
+	minutes.push_back(vec3(-0.01f, 0.20f, 0.014f));
 	minutes.push_back(vec3(-0.01f, -0.0f, 0.014f));
 	minutes.push_back(vec3(0.01f, -0.0f, 0.014f));
 	Polygon minutes3d = make3dPoly(minutes, vec3(0.2f, 0.2f, 0.2f), 0.0001f);
 
 	vector<vec3> hours = {};
-	hours.push_back(vec3(0.02f, 0.25f, 0.012f));
-	hours.push_back(vec3(0.0f, 0.29f, 0.012f));
-	hours.push_back(vec3(-0.02f, 0.25f, 0.012f));
+	hours.push_back(vec3(0.02f, 0.15f, 0.012f));
+	hours.push_back(vec3(0.0f, 0.19f, 0.012f));
+	hours.push_back(vec3(-0.02f, 0.15f, 0.012f));
 	hours.push_back(vec3(-0.02f, -0.0f, 0.012f));
 	hours.push_back(vec3(0.02f, -0.0f, 0.012f));
 	Polygon hours3d = make3dPoly(hours, vec3(0.4f, 0.4f, 0.4f), 0.0001f);
