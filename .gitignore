@@ -5,6 +5,8 @@
 !Main.cpp
 !Polygon.cpp
 
-# include README.MD and .gitignore
+# include README.MD and .gitignore and screenshots
 !README.MD
 !.gitignore
+!/screenshots/  
+!/screenshots/*  
