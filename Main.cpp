@@ -260,7 +260,10 @@ int main()
 
 		mat4 stickTransformation = mat4(1.0f);
 		stickTransformation = translate(stickTransformation, -stickOrigin);
-		stickTransformation = rotate(stickTransformation, (float)cos(glfwGetTime() * 3) * 0.2f, vec3(0.0f, 0.0f, 1.0f));
+		//stickTransformation = rotate(stickTransformation, (float)cos(glfwGetTime() * 3.18) * 0.2f, vec3(0.0f, 0.0f, 1.0f));
+		stickTransformation = rotate(
+			stickTransformation, (float)cos(glfwGetTime() * 6.283f / 2) * 0.35f, vec3(0.0f, 0.0f, 1.0f));
+
 		stickTransformation = translate(stickTransformation, stickOrigin);
 
 		stick3d.transformation(stickTransformation);
