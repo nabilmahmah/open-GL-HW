@@ -34,7 +34,7 @@ void processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-	const float cameraSpeed = 0.05f;
+	const float cameraSpeed = 0.001f;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos += cameraSpeed * cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -68,10 +68,10 @@ Polygon makeCirclePlate(float r, vec3 c, vec3 center = vec3(0.0f, 0.0f, 0.0f))
 
 	const int seg = 32;
 
-	// center
+	//? center
 	v.push_back(center);
 
-	// c-r points
+	//? c-r points
 	for (int i = 0; i <= seg; i++)
 	{
 		float angle = (float)i * (2.0f * pi<float>() / seg);
@@ -88,23 +88,23 @@ Polygon makeCirclePlate(float r, vec3 c, vec3 center = vec3(0.0f, 0.0f, 0.0f))
 Polygon make3dPoly(vector<vec3> vertices, vec3 c, float z)
 {
 	vector<vec3> v;
-	int s = vertices.size();
-
-	// front
+	
+	//? front
 	for (vec3 vec : vertices)
 	{
 		v.push_back(vec);
 	}
 	v.push_back(vertices.at(0));
 
-	// back
+	//? back
 	for (vec3 vec : vertices)
 	{
 		v.push_back(vec3(vec.x, vec.y, vec.z + z));
 	}
-	v.push_back(vec3(vertices.at(0).x, vertices.at(0).y, z));
-
-	// sides
+	v.push_back(vec3(vertices.at(0).x, vertices.at(0).y, vertices.at(0).z + z));
+	
+	//? sides
+	int s = vertices.size();
 	for (int i = 0; i < s; i++)
 	{
 		int n = (i + 1) % s;
@@ -205,12 +205,7 @@ int main()
 
 	Polygon plate = makeCirclePlate(0.4f, vec3(0.8f, 0.8f, 0.8f), vec3(0.0f, 0.0f, 0.01f));
 
-	// vector<vec3> bolt = {};
-	// bolt.push_back(vec3(0.02f, 0.02f, 0.0f));
-	// bolt.push_back(vec3(-0.02f, 0.02f, 0.0f));
-	// bolt.push_back(vec3(-0.02f, -0.02f, 0.0f));
-	// bolt.push_back(vec3(0.02f, -0.02f, 0.0f));
-	// Polygon bolt3d = make3dPoly(bolt, vec3(1.0f, 1.0f, 1.0f), 0.02f);
+	
 	Polygon bolt3d = makeCirclePlate(0.03f, vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.02f));
 
 	vector<vec3> secounds = {};
@@ -255,13 +250,11 @@ int main()
 		view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		ourShader.setMat4("view", view);
 
-		mat4 transformation = mat4(1.0f);
-
 		body3d.drawStrip(ourShader);
-		// body3d.drawOutline(ourShader);
+		 //body3d.drawOutline(ourShader);
 
 		headTringle3d.drawStrip(ourShader);
-		// headTringle3d.drawOutline(ourShader);
+		 //headTringle3d.drawOutline(ourShader);
 
 		vec3 stickOrigin = vec3(0.0f, -0.5f, -0.1f);
 
@@ -275,46 +268,46 @@ int main()
 		stickThing3d.transformation(stickTransformation);
 
 		stick3d.drawStrip(ourShader);
-		// stick3d.drawOutline(ourShader);
+		 //stick3d.drawOutline(ourShader);
 
 		stickThing3d.drawStrip(ourShader);
-		// stickThing3d.drawOutline(ourShader);
+		 //stickThing3d.drawOutline(ourShader);
 
 		plate.drawFan(ourShader);
-		// plate.drawOutline(ourShader);
+		 //plate.drawOutline(ourShader);
 
 		vec3 centerOrigin = vec3(0.0f, 0.0f, -0.0f);
 
 		mat4 secoundsTransformation = mat4(1.0f);
 		secoundsTransformation = translate(secoundsTransformation, -centerOrigin);
-		secoundsTransformation = rotate(secoundsTransformation, -radians((float)(int)glfwGetTime()), vec3(0.0f, 0.0f, 1.0f));
+		secoundsTransformation = rotate(secoundsTransformation, -radians((float)(int)glfwGetTime())*6, vec3(0.0f, 0.0f, 1.0f));
 		secoundsTransformation = translate(secoundsTransformation, centerOrigin);
 
 		secounds3d.transformation(secoundsTransformation);
 		secounds3d.drawFan(ourShader);
-		// secounds3d.drawOutline(ourShader);
+		 //secounds3d.drawOutline(ourShader);
 
 		mat4 minutesTransformation = mat4(1.0f);
 		minutesTransformation = translate(minutesTransformation, -centerOrigin);
-		minutesTransformation = rotate(minutesTransformation, -radians((float)(int)glfwGetTime()) / 60, vec3(0.0f, 0.0f, 1.0f));
+		minutesTransformation = rotate(minutesTransformation, -radians((float)(int)glfwGetTime())*6 / 60, vec3(0.0f, 0.0f, 1.0f));
 		minutesTransformation = translate(minutesTransformation, centerOrigin);
 
 		minutes3d.transformation(minutesTransformation);
 		minutes3d.drawFan(ourShader);
-		// minutes3d.drawOutline(ourShader);
+		 //minutes3d.drawOutline(ourShader);
 
 		mat4 hoursTransformation = mat4(1.0f);
 		hoursTransformation = translate(hoursTransformation, -centerOrigin);
-		hoursTransformation = rotate(hoursTransformation, -radians((float)(int)glfwGetTime()) / 60 / 60, vec3(0.0f, 0.0f, 1.0f));
+		hoursTransformation = rotate(hoursTransformation, -radians((float)(int)glfwGetTime())*6 / 60 / 60, vec3(0.0f, 0.0f, 1.0f));
 		hoursTransformation = translate(hoursTransformation, centerOrigin);
 
 		hours3d.transformation(hoursTransformation);
 		hours3d.drawFan(ourShader);
-		// hours3d.drawOutline(ourShader);
+		 //hours3d.drawOutline(ourShader);
 
 		// bolt3d.drawStrip(ourShader);
 		bolt3d.drawFan(ourShader);
-		// bolt3d.drawOutline(ourShader);
+		 //bolt3d.drawOutline(ourShader);
 
 		// cout << (float)(int)glfwGetTime() << endl;
 		// cout << radians((float)(int)glfwGetTime()) << endl;
