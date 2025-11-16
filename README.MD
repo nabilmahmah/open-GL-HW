@@ -1,10 +1,11 @@
-# screenshots
-
-<img src="./screenshots/1.png" alt="screenshot-1" width="295"/>
-<img src="./screenshots/2.png" alt="screenshot-2" width="295"/>
-<img src="./screenshots/3.png" alt="screenshot-3" width="295"/>
-
-## Contributors
+# Contributors
 
 - [Hamza Syrage](https://github.com/HamzaSyrage)
 - [Nabil Mahmah](https://github.com/nabilmahmah)
+
+## screenshots
+![screenshot-1](./screenshots/1.png "screenshot-1")
+
+![screenshot-2](./screenshots/2.png "screenshot-2")
+
+![screenshot-3](./screenshots/3.png "screenshot-3")
