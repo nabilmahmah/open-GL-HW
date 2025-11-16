@@ -1,4 +1,8 @@
-# we will but screenshots here after we finish
+# screenshots
+
+<img src="./screenshots/1.png" alt="screenshot-1" width="295"/>
+<img src="./screenshots/2.png" alt="screenshot-2" width="295"/>
+<img src="./screenshots/3.png" alt="screenshot-3" width="295"/>
 
 ## Contributors
 
